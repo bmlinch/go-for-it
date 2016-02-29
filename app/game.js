@@ -7,6 +7,7 @@ angular.module('con4', [])
 			 * $scope.grid = buildGrid(); DONE
 			 * This is connect 4 so red plays first
 			 */
+            $scope.activePlayer = 'red'
                var victory = false
                $scope.grid = buildGrid();
 		}
@@ -16,12 +17,12 @@ angular.module('con4', [])
 			//Each cell of the grid is an object that knows its coords DONE
             var grid = []
             for (var row = 0; row < 6; row++){
-                $scope.grid[row] = []
+                grid[row] = []
                 for(var col = 0; col < 7; col++){
-                    $scope.grid[row].push({row: row, col: col})
+                    grid[row].push({row: row, col: col})
                 }              
             }
-            return grid
+            return grid;
 			/**
 			 * Cell Schema
 			 * {
@@ -58,12 +59,13 @@ angular.module('con4', [])
 			 * set cell.hasToken = true   DONE
 			 * set cell.color $scope.activePlayer Done
 			 **/  
-			cell = $scope.grid[row][col]
+			var cell = $scope.grid[row][col]
+            
             cell.hasToken = true
             cell.color = $scope.activePlayer
 			//endTurn and checkVictory
             endTurn()
-            checkVictory()
+            checkVictory(cell)
             
         
 		}
@@ -104,6 +106,7 @@ angular.module('con4', [])
 			
 			//Check Vertical
 			var verticalMatches = 0;
+           
 			verticalMatches += checkNextCell(cell, 0, 'bottom');
 			
 			//Check DiagLeftUp and RightDown
@@ -119,10 +122,14 @@ angular.module('con4', [])
           
             
             
-            
+            console.log(verticalMatches, horizontalMatches, diagLeft, diagRight)
 			if(verticalMatches >= 3 || horizontalMatches >= 3 || diagLeft >= 3 || diagRight >= 3){
 				//You can do better than an alert 
-				alert(cell.color + ' Wins');
+				
+                victory = true;
+                if(victory){
+                    alert('yes!');
+                }
 			}
 		}
 		
@@ -148,29 +155,29 @@ angular.module('con4', [])
             
             switch(direction){
                 case 'left':
-                col--;
+                nextCol--;
                 break;
                 case 'right':
-                col++;
+                nextCol++;
                 break;
                 case 'bottom':
-                row++;
+                nextRow++;
                 break;
                 case 'diagUpLeft':
-                row--;
-                col--;
+                nextRow--;
+                nextCol--;
                 break;
-                case 'diagBotRight';
-                row++;
-                col++;
+                case 'diagBotRight':
+                nextRow++;
+                nextCol++;
                 break;
-                case: 'diagUpRight':
-                row--;
-                col++;
+                case 'diagUpRight':
+                nextRow--;
+                nextCol++;
                 break;
                 case 'diagBotLeft':
-                row++;
-                col--;
+                nextRow++;
+                nextCol--;
                 break;
                 
             }
@@ -178,10 +185,10 @@ angular.module('con4', [])
             
             
             
-            if(nextRow > 0 || nextRow < 5 || nextCol > 6){
+            if(nextRow < 0 || nextRow > 5 || nextCol > 6 || nextCol < 0){
                 return null;
             } else {
-                return $scope.grid[nextRow[nextCol]]
+                return $scope.grid[nextRow][nextCol]
             }
 		}
 		
@@ -196,16 +203,16 @@ angular.module('con4', [])
 			 * 
 			 * otherwise return matches
 			 */
-            var nextCell = getNextCell(cell, direction){
+            var nextCell = getNextCell(cell, direction)
                 if(nextCell){
-                    if(nextCell.hasToken === cell.color && nextCell.color === cell.color){
+                    if(nextCell.hasToken && nextCell.color === cell.color){
                         matches++
                         return checkNextCell(nextCell, matches, direction)
-                    } else {
-                        return matches;
                     }
-                }
-            }
+                } 
+                    return matches;
+                
+            
            
 		}
 		
