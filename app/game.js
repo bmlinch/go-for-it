@@ -78,13 +78,13 @@ angular.module('con4', [])
 		 * Check South will need essentially two base cases
 		 * 
 		 */
-            if($scope.grid[row][col].hasToken) return row - 1
+            if($scope.grid[row][col].hasToken) {return row - 1}
 			//Base case 1 found south Token return row - 1 to go back one step
 			
 			//base case 2 reached bottom of grid return row or 5
-			if(row > 5){
-                return 5
-            }
+			if(row >= 5){return 5}
+            row++
+            return checkSouth(row, col)
 			/**
 			 * if neither base case 
 			 * (***increment row***, then return checkSouth())
