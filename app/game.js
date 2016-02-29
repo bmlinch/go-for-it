@@ -3,23 +3,32 @@ angular.module('con4', [])
 		
 		$scope.newGame = function(){
 			/**
-			 * set victory to false
-			 * $scope.grid = buildGrid();
+			 * set victory to false DONE
+			 * $scope.grid = buildGrid(); DONE
 			 * This is connect 4 so red plays first
 			 */
+               var victory = false
+               $scope.grid = buildGrid();
 		}
 		
 		function buildGrid(){
-			//Build a 6x7 grid object and return it from this function
-			//Each cell of the grid is an object that knows its coords
+			//Build a 6x7 grid object and return it from this function DONE
+			//Each cell of the grid is an object that knows its coords DONE
+            var grid = []
+            for (var row = 0; row < 6; row++){
+                $scope.grid[row] = []
+                for(var col = 0; col < 7; col++){
+                    $scope.grid[row].push({row: row, col: col})
+                }              
+            }
+            return grid
 			/**
 			 * Cell Schema
 			 * {
 			 * 		row: number,
 			 * 		col: number
 			 * }
-			 */
-			
+			 */		
 			//Once you finishe building your grid make sure $scope.newGame is setting 
 			//$scope.grid = buildGrid();
 			//If your build grid is working correctly you can start up your server to see the grid
@@ -43,14 +52,20 @@ angular.module('con4', [])
 			var row = checkSouth(0, col);
 
 			/**
-			 * Once the row is identified
-			 * set the cell by accessing 
-			 * $scope.grid[row][col]
-			 * set cell.hasToken = true
-			 * set cell.color $scope.activePlayer
+			 * Once the row is identified DONE
+			 * set the cell by accessing  DONE
+			 * $scope.grid[row][col]      DONE
+			 * set cell.hasToken = true   DONE
+			 * set cell.color $scope.activePlayer Done
 			 **/  
-			
+			cell = $scope.grid[row][col]
+            cell.hasToken = true
+            cell.color = $scope.activePlayer
 			//endTurn and checkVictory
+            endTurn()
+            checkVictory()
+            
+        
 		}
 		
 		function checkSouth(row, col){
@@ -63,11 +78,13 @@ angular.module('con4', [])
 		 * Check South will need essentially two base cases
 		 * 
 		 */
-			
+            if($scope.grid[row][col].hasToken) return row - 1
 			//Base case 1 found south Token return row - 1 to go back one step
 			
 			//base case 2 reached bottom of grid return row or 5
-			
+			if(row > 5){
+                return 5
+            }
 			/**
 			 * if neither base case 
 			 * (***increment row***, then return checkSouth())
@@ -99,6 +116,10 @@ angular.module('con4', [])
 			diagRight += checkNextCell(cell, 0, 'diagUpRight');
 			diagRight += checkNextCell(cell, 0, 'diagBotLeft');
 			
+          
+            
+            
+            
 			if(verticalMatches >= 3 || horizontalMatches >= 3 || diagLeft >= 3 || diagRight >= 3){
 				//You can do better than an alert 
 				alert(cell.color + ' Wins');
@@ -120,7 +141,48 @@ angular.module('con4', [])
 			 * 
 			 * otherwise 
 			 * return $scope.grid[nextRow][nextCol];
+             * 
 			 */
+            var nextRow = cell.row
+            var nextCol = cell.col
+            
+            switch(direction){
+                case 'left':
+                col--;
+                break;
+                case 'right':
+                col++;
+                break;
+                case 'bottom':
+                row++;
+                break;
+                case 'diagUpLeft':
+                row--;
+                col--;
+                break;
+                case 'diagBotRight';
+                row++;
+                col++;
+                break;
+                case: 'diagUpRight':
+                row--;
+                col++;
+                break;
+                case 'diagBotLeft':
+                row++;
+                col--;
+                break;
+                
+            }
+            
+            
+            
+            
+            if(nextRow > 0 || nextRow < 5 || nextCol > 6){
+                return null;
+            } else {
+                return $scope.grid[nextRow[nextCol]]
+            }
 		}
 		
 		function checkNextCell(cell, matches, direction){
@@ -134,14 +196,31 @@ angular.module('con4', [])
 			 * 
 			 * otherwise return matches
 			 */
+            var nextCell = getNextCell(cell, direction){
+                if(nextCell){
+                    if(nextCell.hasToken === cell.color && nextCell.color === cell.color){
+                        matches++
+                        return checkNextCell(nextCell, matches, direction)
+                    } else {
+                        return matches;
+                    }
+                }
+            }
+           
 		}
 		
 		function endTurn(){
 			/**
-			 * End Turn simply switch 
-			 * $scope.activePlayer from 
-			 * 'red' to 'yellow' 
-			 * and 'yellow' to 'red'
+			 * End Turn simply switch DONE
+             
+			 * $scope.activePlayer from DONE
+			 * 'red' to 'yellow' DONE
+			 * and 'yellow' to 'red' DONE
 			 */
+            if($scope.activePlayer === 'red'){
+                $scope.activePlayer = 'yellow'
+            } else{
+                $scope.activePlayer = 'red'
+            }
 		}
 	});
